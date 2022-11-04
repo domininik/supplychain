@@ -1,6 +1,6 @@
-import "./App.css";
 import React from "react";
 import Web3 from "web3";
+import { Container, Header, Icon } from 'semantic-ui-react'
 
 class App extends React.Component {
   state = {
@@ -33,13 +33,20 @@ class App extends React.Component {
 
   render() {
     return (
-      <div id="App" >
+      <Container>
+        <Header as='h2'>
+          <Icon name='chain' />
+          <Header.Content>
+            SupplyChain
+            <Header.Subheader>supply chain on blockchain</Header.Subheader>
+          </Header.Content>
+        </Header>
         <div className="container">
           <p>Contract owner is {this.state.owner}</p>
           <p>And Your account is {this.state.account}</p>
           <p>Number of items: {this.state.itemIndex}</p>
         </div>
-      </div>
+      </Container>
     );
   }
 }
