@@ -8,10 +8,10 @@ Start Ganache with
 ```
 ganache
 ```
-and import the first private key into the MetaMask and switch network to localhost
+and import the first private key into the MetaMask and switch network to localhost.
 
 Go to `truffle` directory and
-install truffle dependencies with
+install Truffle dependencies with
 ```
 npm install
 ```
@@ -30,4 +30,4 @@ and run the client with
 npm start
 ```
 
-Go to http://localhost:3000/ to access the client
+Go to http://localhost:3000/ to access the client.

@@ -37,9 +37,8 @@ class NewItemForm extends React.Component {
           />
         </Form.Field>
         <Form.Field>
-          <label>Price</label>
+          <label>Price (in wei)</label>
           <Input
-            label='wei'
             value={this.state.price}
             onChange={(e) => this.setState({ price: e.target.value })}
           />

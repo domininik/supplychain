@@ -1,8 +1,9 @@
-import React from "react";
-import Web3 from "web3";
-import { Container, Segment, Message } from 'semantic-ui-react'
+import React from 'react';
+import Web3 from 'web3';
+import { Container, Segment, Grid, Divider, Message } from 'semantic-ui-react';
 import HeaderIcon from './HeaderIcon';
 import NewItemForm from './NewItemForm';
+import SearchItem from './SearchItem';
 
 class App extends React.Component {
   state = {
@@ -12,10 +13,10 @@ class App extends React.Component {
   }
 
   async componentDidMount () {
-    const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+    const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
     const accounts = await web3.eth.requestAccounts();
     const networkID = await web3.eth.net.getId();
-    const artifact = require("./contracts/ItemManager.json");
+    const artifact = require('./contracts/ItemManager.json');
     const { abi } = artifact;
     let address, contract;
 
@@ -40,12 +41,22 @@ class App extends React.Component {
         <HeaderIcon />
         {
           this.state.account === this.state.owner ? (
-            <Segment>
-              <p>Total number of items: {this.state.itemIndex}</p>
-              <NewItemForm
-                account={this.state.account}
-                contract={this.state.contract}
-              />
+            <Segment placeholder>
+              <Grid columns={2} relaxed='very' stackable>
+                <Grid.Column verticalAlign='middle'>
+                  <SearchItem
+                    itemIndex={this.state.itemIndex}
+                    contract={this.state.contract}
+                  />
+                </Grid.Column>
+                <Grid.Column verticalAlign='middle'>
+                  <NewItemForm
+                    account={this.state.account}
+                    contract={this.state.contract}
+                  />
+                </Grid.Column>
+              </Grid>
+              <Divider vertical>Or</Divider>
             </Segment>
           ) : (
             <Message warning>
