@@ -9,7 +9,8 @@ class App extends React.Component {
   state = {
     owner: '',
     account: '',
-    itemIndex: 0
+    itemIndex: 0,
+    web3: null
   }
 
   async componentDidMount () {
@@ -28,6 +29,7 @@ class App extends React.Component {
     }
 
     this.setState({
+      web3: web3,
       account: accounts[0],
       contract: contract,
       owner: await contract.methods.owner().call(),
@@ -47,6 +49,7 @@ class App extends React.Component {
                   <SearchItem
                     itemIndex={this.state.itemIndex}
                     contract={this.state.contract}
+                    web3={this.state.web3}
                   />
                 </Grid.Column>
                 <Grid.Column verticalAlign='middle'>

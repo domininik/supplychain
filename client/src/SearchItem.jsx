@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Message, Segment } from 'semantic-ui-react';
+import ShowItem from './ShowItem';
 
 class SearchItem extends React.Component {
   state = {
@@ -46,6 +47,10 @@ class SearchItem extends React.Component {
               <Segment>identifier: {this.state.itemData.identifier}</Segment>
               <Segment>status: {this.state.itemData.status}</Segment>
               <Segment>address: {this.state.itemData.item}</Segment>
+              <ShowItem
+                address={this.state.itemData.item}
+                web3={this.props.web3}
+              />
             </Segment.Group>
           ) : null
         }
