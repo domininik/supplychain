@@ -1,12 +1,12 @@
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Segment, Button } from 'semantic-ui-react';
 
 class ShowItem extends React.Component {
   state = {
-    price: null,
+    price: null
   }
 
-  onClick = async (event) => {
+  viewMore = async (event) => {
     event.preventDefault();
 
     const web3 = this.props.web3;
@@ -22,17 +22,54 @@ class ShowItem extends React.Component {
     }
   }
 
+  markItemAsPaid = async () => {
+    try {
+      await this.props.contract.methods
+        .markItemAsPaid(this.props.index)
+        .send({ from: this.props.account });
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  markItemAsDelivered = async () => {
+    try {
+      await this.props.contract.methods
+        .markItemAsDelivered(this.props.index)
+        .send({ from: this.props.account });
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
   render() {
     return(
-      <Segment>
+      <Segment.Group>
+        <Segment>identifier: {this.props.identifier}</Segment>
+        <Segment>status: {this.props.status}</Segment>
+        <Segment>address: {this.props.address}</Segment>
         {
           this.state.price ? (
-            <span>price: {this.state.price} wei</span>
+            <Segment>price: {this.state.price} wei</Segment>
           ) : (
-            <a href='/' onClick={this.onClick}>view more</a>
+            <Segment><a href='/' onClick={this.viewMore}>view more</a></Segment>
           )
         }
-      </Segment>
+        {
+          this.props.status === '0' ? (
+            <Segment>
+              <Button primary onClick={this.markItemAsPaid}>mark as paid</Button>
+            </Segment>
+          ) : null
+        }
+        {
+          this.props.status === '1' ? (
+            <Segment>
+              <Button primary onClick={this.markItemAsDelivered}>mark as delivered</Button>
+            </Segment>
+          ) : null
+        }
+      </Segment.Group>
     );
   }
 }

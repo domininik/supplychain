@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Message, Segment } from 'semantic-ui-react';
+import { Form, Input, Message } from 'semantic-ui-react';
 import ShowItem from './ShowItem';
 
 class SearchItem extends React.Component {
@@ -11,7 +11,7 @@ class SearchItem extends React.Component {
 
   onSubmit = async (event) => {
     event.preventDefault();
-    this.setState({ errorMessage: '' });
+    this.setState({ errorMessage: '', itemData: null });
 
     const contract = this.props.contract;
     const index = this.state.index;
@@ -43,15 +43,15 @@ class SearchItem extends React.Component {
         </div>
         {
           this.state.itemData ? (
-            <Segment.Group>
-              <Segment>identifier: {this.state.itemData.identifier}</Segment>
-              <Segment>status: {this.state.itemData.status}</Segment>
-              <Segment>address: {this.state.itemData.item}</Segment>
-              <ShowItem
-                address={this.state.itemData.item}
-                web3={this.props.web3}
-              />
-            </Segment.Group>
+            <ShowItem
+              index={this.state.index}
+              identifier={this.state.itemData.identifier}
+              status={this.state.itemData.status}
+              address={this.state.itemData.item}
+              web3={this.props.web3}
+              account={this.props.account}
+              contract={this.props.contract}
+            />
           ) : null
         }
       </div>

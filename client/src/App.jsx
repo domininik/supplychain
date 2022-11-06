@@ -50,6 +50,7 @@ class App extends React.Component {
                     itemIndex={this.state.itemIndex}
                     contract={this.state.contract}
                     web3={this.state.web3}
+                    account={this.state.account}
                   />
                 </Grid.Column>
                 <Grid.Column verticalAlign='middle'>
