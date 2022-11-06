@@ -10,7 +10,8 @@ class App extends React.Component {
     owner: '',
     account: '',
     itemIndex: 0,
-    web3: null
+    web3: null,
+    notification: ''
   }
 
   async componentDidMount () {
@@ -35,6 +36,15 @@ class App extends React.Component {
       owner: await contract.methods.owner().call(),
       itemIndex: await contract.methods.itemIndex().call()
     });
+
+    contract.events.StatusChange()
+      .on('data', (event) => {
+        const index = event.returnValues.index;
+        const status = event.returnValues.status;
+        const notification = `Item with index ${index} changed status to ${status}`;
+
+        this.setState({ notification: notification });
+      });
   }
 
   render() {
@@ -43,25 +53,34 @@ class App extends React.Component {
         <HeaderIcon />
         {
           this.state.account === this.state.owner ? (
-            <Segment placeholder>
-              <Grid columns={2} relaxed='very' stackable>
-                <Grid.Column verticalAlign='middle'>
-                  <SearchItem
-                    itemIndex={this.state.itemIndex}
-                    contract={this.state.contract}
-                    web3={this.state.web3}
-                    account={this.state.account}
-                  />
-                </Grid.Column>
-                <Grid.Column verticalAlign='middle'>
-                  <NewItemForm
-                    account={this.state.account}
-                    contract={this.state.contract}
-                  />
-                </Grid.Column>
-              </Grid>
-              <Divider vertical>Or</Divider>
-            </Segment>
+            <React.Fragment>
+              {
+                this.state.notification ? (
+                  <Message positive>
+                    <Message.Header>{this.state.notification}</Message.Header>
+                  </Message>
+                ) : null
+              }
+              <Segment placeholder>
+                <Grid columns={2} relaxed='very' stackable>
+                  <Grid.Column verticalAlign='middle'>
+                    <SearchItem
+                      itemIndex={this.state.itemIndex}
+                      contract={this.state.contract}
+                      web3={this.state.web3}
+                      account={this.state.account}
+                    />
+                  </Grid.Column>
+                  <Grid.Column verticalAlign='middle'>
+                    <NewItemForm
+                      account={this.state.account}
+                      contract={this.state.contract}
+                    />
+                  </Grid.Column>
+                </Grid>
+                <Divider vertical>Or</Divider>
+              </Segment>
+            </React.Fragment>
           ) : (
             <Message warning>
               <Message.Header>You are not authorized to access this page</Message.Header>
