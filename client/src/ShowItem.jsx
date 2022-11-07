@@ -3,19 +3,24 @@ import { Segment, Button } from 'semantic-ui-react';
 
 class ShowItem extends React.Component {
   state = {
-    price: null
+    price: null,
+    itemContract: null
+  }
+
+  async componentDidMount () {
+    const web3 = this.props.web3;
+    const address = this.props.address;
+    const artifact = require('./contracts/Item.json');
+    const itemContract = new web3.eth.Contract(artifact.abi, address);
+
+    this.setState({ itemContract: itemContract });
   }
 
   viewMore = async (event) => {
     event.preventDefault();
 
-    const web3 = this.props.web3;
-    const address = this.props.address;
-    const artifact = require('./contracts/Item.json');
-    const contract = new web3.eth.Contract(artifact.abi, address);
-
     try {
-      const price = await contract.methods.price().call();
+      const price = await this.state.itemContract.methods.price().call();
       this.setState({ price: price });
     } catch (err) {
       console.log(err.message);
@@ -36,6 +41,16 @@ class ShowItem extends React.Component {
     try {
       await this.props.contract.methods
         .markItemAsDelivered(this.props.index)
+        .send({ from: this.props.account });
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  withdrawAll = async () => {
+    try {
+      await this.state.itemContract.methods
+        .withdrawAll()
         .send({ from: this.props.account });
     } catch (err) {
       console.log(err.message);
@@ -65,7 +80,10 @@ class ShowItem extends React.Component {
         {
           this.props.status === '1' ? (
             <Segment>
-              <Button primary onClick={this.markItemAsDelivered}>mark as delivered</Button>
+              <Button.Group widths='2'>
+                <Button primary onClick={this.markItemAsDelivered}>mark as delivered</Button>
+                <Button primary onClick={this.withdrawAll}>withdraw money</Button>
+              </Button.Group>
             </Segment>
           ) : null
         }
