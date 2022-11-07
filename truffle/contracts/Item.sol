@@ -5,6 +5,7 @@ import "./ItemManager.sol";
 
 interface ItemManagerInterface {
     function markItemAsPaid(uint index) external;
+    function owner() external view returns (address);
 }
 
 contract Item {
@@ -16,6 +17,15 @@ contract Item {
         manager = _manager;
         index = _index;
         price = _price;
+    }
+
+    function getBalance() public view returns(uint) {
+        return address(this).balance;
+    }
+
+    function withdrawAll() public {
+        address payable receiver = payable(ItemManagerInterface(address(manager)).owner());
+        receiver.transfer(getBalance());
     }
 
     receive() external payable {
