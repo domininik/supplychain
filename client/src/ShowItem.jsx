@@ -1,10 +1,11 @@
 import React from 'react';
-import { Segment, Button } from 'semantic-ui-react';
+import { Segment, Button, Message } from 'semantic-ui-react';
 
 class ShowItem extends React.Component {
   state = {
     price: null,
-    itemContract: null
+    itemContract: null,
+    errorMessage: ''
   }
 
   async componentDidMount () {
@@ -23,7 +24,7 @@ class ShowItem extends React.Component {
       const price = await this.state.itemContract.methods.price().call();
       this.setState({ price: price });
     } catch (err) {
-      console.log(err.message);
+      this.setState({ errorMessage: err.message });
     }
   }
 
@@ -33,7 +34,7 @@ class ShowItem extends React.Component {
         .markItemAsPaid(this.props.index)
         .send({ from: this.props.account });
     } catch (err) {
-      console.log(err.message);
+      this.setState({ errorMessage: err.message });
     }
   }
 
@@ -43,7 +44,7 @@ class ShowItem extends React.Component {
         .markItemAsDelivered(this.props.index)
         .send({ from: this.props.account });
     } catch (err) {
-      console.log(err.message);
+      this.setState({ errorMessage: err.message });
     }
   }
 
@@ -53,7 +54,7 @@ class ShowItem extends React.Component {
         .withdrawAll()
         .send({ from: this.props.account });
     } catch (err) {
-      console.log(err.message);
+      this.setState({ errorMessage: err.message });
     }
   }
 
@@ -84,6 +85,13 @@ class ShowItem extends React.Component {
                 <Button primary onClick={this.markItemAsDelivered}>mark as delivered</Button>
                 <Button primary onClick={this.withdrawAll}>withdraw money</Button>
               </Button.Group>
+            </Segment>
+          ) : null
+        }
+        {
+          this.state.errorMessage ? (
+            <Segment>
+              <Message error header="Oops!" content={this.state.errorMessage} />
             </Segment>
           ) : null
         }

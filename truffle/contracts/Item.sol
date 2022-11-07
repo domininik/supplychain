@@ -24,6 +24,8 @@ contract Item {
     }
 
     function withdrawAll() public {
+        require(getBalance() > 0, "No money to withdraw");
+
         address payable receiver = payable(ItemManagerInterface(address(manager)).owner());
         receiver.transfer(getBalance());
     }
