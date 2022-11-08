@@ -15,6 +15,14 @@ class App extends React.Component {
   }
 
   async componentDidMount () {
+    if (typeof web3 !== 'undefined') {
+      this.initialize();
+    } else {
+      console.log('ERROR: web3 is undefined');
+    }
+  }
+
+  async initialize() {
     const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
     const accounts = await web3.eth.requestAccounts();
     const networkID = await web3.eth.net.getId();
@@ -52,7 +60,7 @@ class App extends React.Component {
       <Container style={{marginTop: 10}}>
         <HeaderIcon />
         {
-          this.state.account === this.state.owner ? (
+          this.state.account && this.state.account === this.state.owner ? (
             <React.Fragment>
               {
                 this.state.notification ? (
@@ -84,7 +92,13 @@ class App extends React.Component {
           ) : (
             <Message warning>
               <Message.Header>You are not authorized to access this page</Message.Header>
-              <p>Your current account is {this.state.account}</p>
+              {
+                this.state.account ? (
+                  <p>Your current account is {this.state.account}, switch to proper account</p>
+                ) : (
+                  <p>Please enable MetaMask and select proper network and account</p>
+                )
+              }
             </Message>
           )
         }
