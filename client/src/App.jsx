@@ -4,6 +4,7 @@ import { Container, Segment, Grid, Divider, Message } from 'semantic-ui-react';
 import HeaderIcon from './HeaderIcon';
 import NewItemForm from './NewItemForm';
 import SearchItem from './SearchItem';
+import ItemManager from './contracts/ItemManager.json';
 
 class App extends React.Component {
   state = {
@@ -14,7 +15,7 @@ class App extends React.Component {
     notification: ''
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     if (typeof web3 !== 'undefined') {
       this.initialize();
     } else {
@@ -26,13 +27,11 @@ class App extends React.Component {
     const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
     const accounts = await web3.eth.requestAccounts();
     const networkID = await web3.eth.net.getId();
-    const artifact = require('./contracts/ItemManager.json');
-    const { abi } = artifact;
     let address, contract;
 
     try {
-      address = artifact.networks[networkID].address;
-      contract = new web3.eth.Contract(abi, address);
+      address = ItemManager.networks[networkID].address;
+      contract = new web3.eth.Contract(ItemManager.abi, address);
     } catch (err) {
       console.error(err);
     }
