@@ -10,12 +10,12 @@ contract('ItemManager', (accounts) => {
   })
 
   it('assigns the contract owner', async() => {
-    assert.equal(owner, await itemManager.owner.call())
+    assert.equal(owner, await itemManager.getOwner.call())
   })
 
   it('creates new item data with proper data', async() => {
     await itemManager.createItem('qwe', '100', { from: owner })
-    const itemData = await itemManager.items(0)
+    const itemData = await itemManager.getItem(0)
     
     assert.equal('qwe', itemData.identifier)
     assert.equal(ItemManager.Status.Created, itemData.status)
@@ -23,7 +23,7 @@ contract('ItemManager', (accounts) => {
 
   it('updates itemIndex after creation which reflects total number of items', async() => {
     await itemManager.createItem('qwe', '100', { from: owner })
-    const index = await itemManager.itemIndex.call()
+    const index = await itemManager.getItemIndex.call()
     
     assert.equal(1, index.toNumber())
   })
@@ -31,7 +31,7 @@ contract('ItemManager', (accounts) => {
   it('marks item as paid', async() => {
     await itemManager.createItem('qwe', '100', { from: owner })
     await itemManager.markItemAsPaid(0, { from: owner })
-    const itemData = await itemManager.items(0)
+    const itemData = await itemManager.getItem(0)
     
     assert.equal(ItemManager.Status.Paid, itemData.status)
   })
@@ -40,7 +40,7 @@ contract('ItemManager', (accounts) => {
     await itemManager.createItem('qwe', '100', { from: owner })
     await itemManager.markItemAsPaid(0, { from: owner })
     await itemManager.markItemAsDelivered(0, { from: owner })
-    const itemData = await itemManager.items(0)
+    const itemData = await itemManager.getItem(0)
     
     assert.equal(ItemManager.Status.Delivered, itemData.status)
   })
