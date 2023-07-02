@@ -13,29 +13,38 @@ contract ItemManager is Ownable {
         Item item;
     }
 
-    mapping(uint => ItemData) public items;
-    uint public itemIndex;
+    mapping(uint => ItemData) private s_items;
+    
+    uint256 private s_itemIndex;
 
     event StatusChange(uint indexed index, Status indexed status);
 
     function createItem(string memory identifier, uint price) public onlyOwner {
-        Item item = new Item(this, itemIndex, price);
+        Item item = new Item(this, s_itemIndex, price);
         ItemData memory itemData = ItemData(identifier, Status.Created, item);
-        items[itemIndex] = itemData;
-        itemIndex++;
+        s_items[s_itemIndex] = itemData;
+        s_itemIndex++;
     }
 
     function markItemAsPaid(uint index) public payable {
-        require(items[index].status == Status.Created, "Item has invalid status");
+        require(s_items[index].status == Status.Created, "Item has invalid status");
 
-        items[index].status = Status.Paid;
+        s_items[index].status = Status.Paid;
         emit StatusChange(index, Status.Paid);
     }
 
     function markItemAsDelivered(uint index) public onlyOwner {
-        require(items[index].status == Status.Paid, "Item has invalid status");
+        require(s_items[index].status == Status.Paid, "Item has invalid status");
 
-        items[index].status = Status.Delivered;
+        s_items[index].status = Status.Delivered;
         emit StatusChange(index, Status.Delivered);
+    }
+
+    function getItem(uint256 index) public view returns (ItemData memory) {
+        return s_items[index];
+    }
+
+    function getItemIndex() public view returns (uint256) {
+        return s_itemIndex;
     }
 }
