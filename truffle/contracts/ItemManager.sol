@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.14;
 
-import "./Ownable.sol";
-import "./Item.sol";
+import {Item} from "./Item.sol";
+import {Ownable} from "./Ownable.sol";
 
 contract ItemManager is Ownable {
     enum Status { Created, Paid, Delivered }

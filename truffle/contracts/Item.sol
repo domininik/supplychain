@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.14;
 
-import "./ItemManager.sol";
+import {ItemManager} from "./ItemManager.sol";
+import {Ownable} from "./Ownable.sol";
+import "truffle/console.sol";
 
 interface ItemManagerInterface {
     function markItemAsPaid(uint256 index) external;
     function getOwner() external view returns (address);
 }
 
-contract Item {
+contract Item is Ownable {
     ItemManager private immutable i_manager;
     uint256 private immutable i_price;
     uint256 private immutable i_index;
@@ -18,6 +20,10 @@ contract Item {
         i_index = index;
         i_price = price;
     }
+
+    receive() external payable {}
+
+    fallback() external payable {}
 
     function receivePayment(uint256 index) external payable {
         require(msg.value == i_price, "Price is not met");
@@ -33,10 +39,14 @@ contract Item {
         return i_price;
     }
 
-    function withdrawAll() public {
-        require(getBalance() > 0, "No money to withdraw");
+    function withdrawAll() public payable onlyOwner {
+        uint256 balance = getBalance();
 
-        address payable receiver = payable(ItemManagerInterface(address(i_manager)).getOwner());
-        receiver.transfer(getBalance());
+        require(balance > 0, "No money to withdraw");
+        
+        address owner = ItemManagerInterface(address(i_manager)).getOwner();
+        (bool sent,) = payable(owner).call{value: balance}("");
+        
+        require(sent, "Failed to withdraw");
     }
 }
