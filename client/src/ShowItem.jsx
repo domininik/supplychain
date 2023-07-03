@@ -21,7 +21,7 @@ class ShowItem extends React.Component {
     event.preventDefault();
 
     try {
-      const price = await this.state.itemContract.methods.price().call();
+      const price = await this.state.itemContract.methods.getPrice().call();
       this.setState({ price: price });
     } catch (err) {
       this.setState({ errorMessage: err.message });
