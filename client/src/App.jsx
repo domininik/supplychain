@@ -40,8 +40,8 @@ class App extends React.Component {
       web3: web3,
       account: accounts[0],
       contract: contract,
-      owner: await contract.methods.owner().call(),
-      itemIndex: await contract.methods.itemIndex().call()
+      owner: await contract.methods.getOwner().call(),
+      itemIndex: await contract.methods.getItemIndex().call()
     });
 
     contract.events.StatusChange()

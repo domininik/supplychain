@@ -17,7 +17,7 @@ class SearchItem extends React.Component {
     const index = this.state.index;
 
     try {
-      const itemData = await contract.methods.items(index).call();
+      const itemData = await contract.methods.getItem(index).call();
       this.setState({ itemData: itemData });
     } catch (err) {
       this.setState({ errorMessage: err.message });
