@@ -19,10 +19,10 @@ contract Item {
         i_price = price;
     }
 
-    receive() external payable {
+    function receivePayment(uint256 index) external payable {
         require(msg.value == i_price, "Price is not met");
-
-        ItemManagerInterface(address(i_manager)).markItemAsPaid(i_index);
+        
+        ItemManagerInterface(address(i_manager)).markItemAsPaid(index);
     }
 
     function getBalance() public view returns(uint256) {
