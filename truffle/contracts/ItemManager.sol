@@ -15,20 +15,20 @@ contract ItemManager is Ownable {
         Item item;
     }
 
-    mapping(uint => ItemData) private s_items;
+    mapping(uint256 => ItemData) private s_items;
     
     uint256 private s_itemIndex;
 
-    event StatusChange(uint indexed index, Status indexed status);
+    event StatusChange(uint256 indexed index, Status indexed status);
 
-    function createItem(string memory identifier, uint price) public onlyOwner {
+    function createItem(string memory identifier, uint256 price) public onlyOwner {
         Item item = new Item(this, s_itemIndex, price);
         ItemData memory itemData = ItemData(identifier, Status.Created, item);
         s_items[s_itemIndex] = itemData;
         s_itemIndex++;
     }
 
-    function markItemAsPaid(uint index) public payable {
+    function markItemAsPaid(uint256 index) public payable {
         Status status = s_items[index].status;
         
         if (status != Status.Created) {
@@ -39,7 +39,7 @@ contract ItemManager is Ownable {
         emit StatusChange(index, Status.Paid);
     }
 
-    function markItemAsDelivered(uint index) public onlyOwner {
+    function markItemAsDelivered(uint256 index) public onlyOwner {
         Status status = s_items[index].status;
         
         if (status != Status.Paid) {
