@@ -4,7 +4,7 @@ pragma solidity ^0.8.14;
 import {Item} from "./Item.sol";
 import {Ownable} from "./Ownable.sol";
 
-error ItemManager__InvalidStatus(uint256 index, uint256 status);
+error ItemManager__InvalidStatus(uint256 index, uint8 status);
 
 contract ItemManager is Ownable {
     enum Status { Created, Paid, Delivered }
@@ -32,7 +32,7 @@ contract ItemManager is Ownable {
         Status status = s_items[index].status;
         
         if (status != Status.Created) {
-            revert ItemManager__InvalidStatus(index, uint256(status));
+            revert ItemManager__InvalidStatus(index, uint8(status));
         }
 
         s_items[index].status = Status.Paid;
@@ -43,7 +43,7 @@ contract ItemManager is Ownable {
         Status status = s_items[index].status;
         
         if (status != Status.Paid) {
-            revert ItemManager__InvalidStatus(index, uint256(status));
+            revert ItemManager__InvalidStatus(index, uint8(status));
         }
 
         s_items[index].status = Status.Delivered;
