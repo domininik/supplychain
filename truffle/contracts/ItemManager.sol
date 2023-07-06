@@ -4,6 +4,8 @@ pragma solidity ^0.8.14;
 import {Item} from "./Item.sol";
 import {Ownable} from "./Ownable.sol";
 
+error ItemManager__InvalidStatus(uint256 index, uint256 status);
+
 contract ItemManager is Ownable {
     enum Status { Created, Paid, Delivered }
 
@@ -27,14 +29,22 @@ contract ItemManager is Ownable {
     }
 
     function markItemAsPaid(uint index) public payable {
-        require(s_items[index].status == Status.Created, "Item has invalid status");
+        Status status = s_items[index].status;
+        
+        if (status != Status.Created) {
+            revert ItemManager__InvalidStatus(index, uint256(status));
+        }
 
         s_items[index].status = Status.Paid;
         emit StatusChange(index, Status.Paid);
     }
 
     function markItemAsDelivered(uint index) public onlyOwner {
-        require(s_items[index].status == Status.Paid, "Item has invalid status");
+        Status status = s_items[index].status;
+        
+        if (status != Status.Paid) {
+            revert ItemManager__InvalidStatus(index, uint256(status));
+        }
 
         s_items[index].status = Status.Delivered;
         emit StatusChange(index, Status.Delivered);

@@ -4,12 +4,18 @@ pragma solidity ^0.8.14;
 contract Ownable {
     address private immutable i_owner;
 
+    error Ownable__Unauthorized(address sender, address owner);
+
     constructor() {
         i_owner = msg.sender;
     }
 
     modifier onlyOwner {
-        require(msg.sender == getOwner(), "Caller is not the owner");
+        address owner = getOwner();
+
+        if (msg.sender != owner) {
+            revert Ownable__Unauthorized(msg.sender, owner);
+        }
         _;
     }
 

@@ -5,6 +5,10 @@ import {ItemManager} from "./ItemManager.sol";
 import {Ownable} from "./Ownable.sol";
 import "truffle/console.sol";
 
+error Item__PriceNotMet(uint256 price, uint256 value);
+error Item__BalanceTooLow(uint256 balance);
+error Item__WithdrawFailed();
+
 interface ItemManagerInterface {
     function markItemAsPaid(uint256 index) external;
     function getOwner() external view returns (address);
@@ -26,8 +30,12 @@ contract Item is Ownable {
     fallback() external payable {}
 
     function receivePayment(uint256 index) external payable {
-        require(msg.value == i_price, "Price is not met");
-        
+        uint256 value = msg.value;
+
+        if (value != i_price) {
+            revert Item__PriceNotMet(i_price, value);
+        }
+
         ItemManagerInterface(address(i_manager)).markItemAsPaid(index);
     }
 
@@ -42,11 +50,15 @@ contract Item is Ownable {
     function withdrawAll() public payable onlyOwner {
         uint256 balance = getBalance();
 
-        require(balance > 0, "No money to withdraw");
+        if (balance == 0) {
+            revert Item__BalanceTooLow(balance);
+        }
         
         address owner = ItemManagerInterface(address(i_manager)).getOwner();
         (bool sent,) = payable(owner).call{value: balance}("");
         
-        require(sent, "Failed to withdraw");
+        if (!sent) {
+            revert Item__WithdrawFailed();
+        }
     }
 }
